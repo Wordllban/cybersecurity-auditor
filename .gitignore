@@ -141,3 +141,16 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
+
+# Project: local DB + test/build artifacts
+*.db
+*.db-*
+*.sqlite
+*.sqlite3
+data/
+coverage/
+playwright-report/
+test-results/
+
+# Assignment brief + mock demo files — never commit
+Home Assignment for candidates/

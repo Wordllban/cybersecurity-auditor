@@ -1,0 +1,21 @@
+{
+  "name": "hibit-ai-assessment-workspace",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Hibit AI assessment workspace — evidence -> observation -> finding",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "pnpm --parallel --filter ./server --filter ./client dev",
+    "build": "pnpm -r build",
+    "seed": "pnpm --filter ./server seed",
+    "test": "pnpm -r --filter ./server --filter ./packages/shared test",
+    "test:e2e": "pnpm --filter ./client test:e2e",
+    "typecheck": "pnpm -r typecheck"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3"
+  }
+}
