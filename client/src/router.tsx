@@ -5,6 +5,7 @@ import {
 } from "@tanstack/react-router";
 import { RootLayout } from "./RootLayout";
 import { HomePage } from "./pages/HomePage";
+import { EvidencePage } from "./pages/EvidencePage";
 import { PlaceholderPage } from "./pages/PlaceholderPage";
 
 const rootRoute = createRootRoute({ component: RootLayout });
@@ -18,7 +19,7 @@ const indexRoute = createRoute({
 const evidenceRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/evidence",
-  component: () => <PlaceholderPage title="Evidence" />,
+  component: EvidencePage,
 });
 
 const observationsRoute = createRoute({

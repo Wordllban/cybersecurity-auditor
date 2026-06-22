@@ -143,11 +143,12 @@ vite.config.ts.timestamp-*
 .vite/
 
 # Project: local DB + test/build artifacts
+# (DB files match the globs below wherever they live; we do NOT ignore `data/`
+# broadly because the committed seed data lives in server/seed/data/)
 *.db
 *.db-*
 *.sqlite
 *.sqlite3
-data/
 coverage/
 playwright-report/
 test-results/

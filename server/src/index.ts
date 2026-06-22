@@ -2,10 +2,20 @@ import { loadConfig } from "./config";
 import { openDatabase } from "./db/connection";
 import { createRepositories } from "./repositories";
 import { createApp } from "./app";
+import { seedEvidenceIfEmpty } from "./seed/seed";
 
 const config = loadConfig();
 const db = openDatabase(config.databasePath);
 const repositories = createRepositories(db);
+
+// Zero-setup data: preload the Hibit evidence on first boot (idempotent).
+const { seeded, total } = await seedEvidenceIfEmpty(repositories.evidence);
+console.log(
+  seeded
+    ? `[server] seeded ${total} evidence items`
+    : `[server] evidence already present (${total} items)`,
+);
+
 const app = createApp({ repositories });
 
 app.listen(config.port, () => {
