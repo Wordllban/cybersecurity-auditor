@@ -13,9 +13,13 @@
     "seed": "pnpm --filter ./server seed",
     "test": "pnpm -r --filter ./server --filter ./packages/shared test",
     "test:e2e": "pnpm --filter ./client test:e2e",
-    "typecheck": "pnpm -r typecheck"
+    "typecheck": "pnpm -r typecheck",
+    "prepare": "husky"
   },
   "devDependencies": {
+    "husky": "^9.1.7",
+    "lint-staged": "^17.0.8",
+    "prettier": "^3.8.4",
     "typescript": "^5.6.3"
   }
 }

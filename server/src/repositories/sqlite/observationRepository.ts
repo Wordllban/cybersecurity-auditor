@@ -35,7 +35,7 @@ export class SqliteObservationRepository implements ObservationRepository {
       `INSERT INTO observations
          (id, customerId, evidenceId, text, observationType, confidence, relatedFrameworkArea)
        VALUES
-         (@id, @customerId, @evidenceId, @text, @observationType, @confidence, @relatedFrameworkArea)`,
+         (@id, @customerId, @evidenceId, @text, @observationType, @confidence, @relatedFrameworkArea)`
     );
     const insertAll = this.db.transaction((rows: Observation[]) => {
       for (const o of rows) {
@@ -67,12 +67,21 @@ export class SqliteObservationRepository implements ObservationRepository {
     return rows.map(rowToObservation);
   }
 
+  async getByIds(ids: string[]): Promise<Observation[]> {
+    if (ids.length === 0) return [];
+    const placeholders = ids.map(() => "?").join(", ");
+    const rows = this.db
+      .prepare(`SELECT * FROM observations WHERE id IN (${placeholders})`)
+      .all(...ids) as ObservationRow[];
+    return rows.map(rowToObservation);
+  }
+
   async deleteUnreferencedByEvidence(evidenceId: string): Promise<void> {
     this.db
       .prepare(
         `DELETE FROM observations
          WHERE evidenceId = ?
-           AND id NOT IN (SELECT observationId FROM finding_observations)`,
+           AND id NOT IN (SELECT observationId FROM finding_observations)`
       )
       .run(evidenceId);
   }
