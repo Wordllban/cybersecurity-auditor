@@ -6,6 +6,7 @@ import {
 import { RootLayout } from "./RootLayout";
 import { HomePage } from "./pages/HomePage";
 import { EvidencePage } from "./pages/EvidencePage";
+import { ObservationsPage } from "./pages/ObservationsPage";
 import { PlaceholderPage } from "./pages/PlaceholderPage";
 
 const rootRoute = createRootRoute({ component: RootLayout });
@@ -25,7 +26,7 @@ const evidenceRoute = createRoute({
 const observationsRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/observations",
-  component: () => <PlaceholderPage title="Observations" />,
+  component: ObservationsPage,
 });
 
 const findingsRoute = createRoute({
