@@ -5,10 +5,12 @@ import type { AnalyzeLlm } from "./llm/openRouterClient";
 import { EvidenceService } from "./services/evidenceService";
 import { ObservationService } from "./services/observationService";
 import { AnalyzeService } from "./services/analyzeService";
+import { FindingService } from "./services/findingService";
 import { healthRouter } from "./routes/health";
 import { evidenceRouter } from "./routes/evidence";
 import { observationsRouter } from "./routes/observations";
 import { analyzeRouter } from "./routes/analyze";
+import { findingsRouter } from "./routes/findings";
 
 export interface AppDeps {
   repositories: Repositories;
@@ -29,11 +31,13 @@ export function createApp({ repositories, llm }: AppDeps): Express {
   const evidenceService = new EvidenceService(repositories);
   const observationService = new ObservationService(repositories);
   const analyzeService = new AnalyzeService(repositories, llm);
+  const findingService = new FindingService(repositories);
 
   app.use(healthRouter(repositories));
   app.use(evidenceRouter(evidenceService));
   app.use(observationsRouter(observationService));
   app.use(analyzeRouter(analyzeService));
+  app.use(findingsRouter(findingService));
 
   // Centralised error handler — routes forward failures via next(err).
   app.use(
@@ -41,11 +45,11 @@ export function createApp({ repositories, llm }: AppDeps): Express {
       err: unknown,
       _req: express.Request,
       res: express.Response,
-      _next: express.NextFunction,
+      _next: express.NextFunction
     ) => {
       console.error("[server] unhandled route error:", err);
       res.status(500).json({ error: "Internal server error" });
-    },
+    }
   );
 
   return app;

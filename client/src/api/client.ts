@@ -5,7 +5,7 @@ export class ApiError extends Error {
   constructor(
     readonly status: number,
     message: string,
-    readonly code?: string,
+    readonly code?: string
   ) {
     super(message);
   }
@@ -39,6 +39,21 @@ export async function apiPost<T>(path: string, body: unknown): Promise<T> {
   });
   if (!res.ok) throw await toError(res, path);
   return res.json() as Promise<T>;
+}
+
+export async function apiPatch<T>(path: string, body: unknown): Promise<T> {
+  const res = await fetch(`${API_URL}${path}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) throw await toError(res, path);
+  return res.json() as Promise<T>;
+}
+
+export async function apiDelete(path: string): Promise<void> {
+  const res = await fetch(`${API_URL}${path}`, { method: "DELETE" });
+  if (!res.ok) throw await toError(res, path);
 }
 
 export interface HealthResponse {
