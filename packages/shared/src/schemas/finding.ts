@@ -56,3 +56,17 @@ export const createFindingInputSchema = findingSchema.pick({
 });
 
 export type CreateFindingInput = z.infer<typeof createFindingInputSchema>;
+
+/**
+ * A suggested finding returned by `/analyze`. It is a Finding without server
+ * timestamps — not persisted server-side (ADR-0003/0006). The `id` is a temporary
+ * client-side handle; `relatedObservationIds` already point at real, persisted
+ * observation IDs (the server remapped the model's correlation keys).
+ */
+export const draftFindingSchema = findingSchema.omit({
+  createdAt: true,
+  updatedAt: true,
+});
+
+export type DraftFinding = z.infer<typeof draftFindingSchema>;
+

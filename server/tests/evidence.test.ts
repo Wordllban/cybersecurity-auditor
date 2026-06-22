@@ -4,6 +4,7 @@ import { openDatabase, type Db } from "../src/db/connection";
 import { createRepositories } from "../src/repositories";
 import { createApp } from "../src/app";
 import { seedEvidence } from "../src/seed/seed";
+import { unusedLlm } from "./fakes";
 
 describe("evidence endpoints", () => {
   let db: Db;
@@ -13,7 +14,7 @@ describe("evidence endpoints", () => {
     db = openDatabase(":memory:");
     const repositories = createRepositories(db);
     await seedEvidence(repositories.evidence);
-    app = createApp({ repositories });
+    app = createApp({ repositories, llm: unusedLlm });
   });
 
   afterEach(() => {

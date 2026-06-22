@@ -3,6 +3,7 @@ import request from "supertest";
 import { openDatabase, type Db } from "../src/db/connection";
 import { createRepositories } from "../src/repositories";
 import { createApp } from "../src/app";
+import { unusedLlm } from "./fakes";
 
 describe("GET /health", () => {
   let db: Db;
@@ -10,7 +11,7 @@ describe("GET /health", () => {
 
   beforeEach(() => {
     db = openDatabase(":memory:");
-    app = createApp({ repositories: createRepositories(db) });
+    app = createApp({ repositories: createRepositories(db), llm: unusedLlm });
   });
 
   afterEach(() => {
