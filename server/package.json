@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "tsx watch --env-file-if-exists=../.env --env-file-if-exists=.env src/index.ts",
     "seed": "tsx --env-file-if-exists=../.env --env-file-if-exists=.env src/seed/cli.ts",
+    "seed:e2e": "tsx src/seed/e2eSeed.ts",
     "build": "tsc -p tsconfig.build.json",
     "start": "node --env-file-if-exists=../.env --env-file-if-exists=.env dist/index.js",
     "typecheck": "tsc --noEmit",
