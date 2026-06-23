@@ -10,7 +10,12 @@ import { FindingValidationError } from "./findingErrors";
 export class FindingService {
   constructor(private readonly repositories: Repositories) {}
 
-  list(customerId: string): Promise<Finding[]> {
+  async list(customerId: string, evidenceId?: string): Promise<Finding[]> {
+    if (evidenceId) {
+      const byEvidence =
+        await this.repositories.findings.listByEvidence(evidenceId);
+      return byEvidence.filter((f) => f.customerId === customerId);
+    }
     return this.repositories.findings.listByCustomer(customerId);
   }
 

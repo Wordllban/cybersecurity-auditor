@@ -35,6 +35,8 @@ export interface FindingRepository {
   /** Persist a finding plus its observation links (relatedEvidenceIds is derived on read). */
   create(finding: Finding): Promise<void>;
   listByCustomer(customerId: string): Promise<Finding[]>;
+  /** Findings that cite at least one observation extracted from the given evidence item. */
+  listByEvidence(evidenceId: string): Promise<Finding[]>;
   getById(id: string): Promise<Finding | null>;
   /** Partial update of editable fields; always bumps updatedAt. Returns null if absent. */
   update(id: string, fields: FindingUpdate): Promise<Finding | null>;

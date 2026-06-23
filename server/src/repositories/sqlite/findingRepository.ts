@@ -109,6 +109,20 @@ export class SqliteFindingRepository implements FindingRepository {
     return rows.map((row) => this.hydrate(row));
   }
 
+  async listByEvidence(evidenceId: string): Promise<Finding[]> {
+    const rows = this.db
+      .prepare(
+        `SELECT DISTINCT f.*
+           FROM findings f
+           JOIN finding_observations fo ON fo.findingId = f.id
+           JOIN observations o ON o.id = fo.observationId
+          WHERE o.evidenceId = ?
+          ORDER BY f.createdAt DESC`
+      )
+      .all(evidenceId) as FindingRow[];
+    return rows.map((row) => this.hydrate(row));
+  }
+
   async getById(id: string): Promise<Finding | null> {
     const row = this.getRow(id);
     return row ? this.hydrate(row) : null;
