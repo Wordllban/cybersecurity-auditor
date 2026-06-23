@@ -10,62 +10,17 @@ import {
   CardContent,
   Checkbox,
   CircularProgress,
-  Dialog,
-  DialogContent,
-  DialogTitle,
   Stack,
   Typography,
 } from "@mui/material";
 import type { AnalyzeResponse } from "@hibit/shared";
-import { fetchEvidence, fetchEvidenceItem } from "../api/evidence";
+import { fetchEvidence } from "../api/evidence";
 import { postAnalyze } from "../api/analyze";
 import { ApiError } from "../api/client";
 import { useDraftFindings } from "../draftFindings";
 import { SourceTypeChip } from "../components/SourceTypeChip";
 
-function EvidenceDetailDialog({
-  id,
-  onClose,
-}: {
-  id: string;
-  onClose: () => void;
-}) {
-  const detail = useQuery({
-    queryKey: ["evidence", id],
-    queryFn: () => fetchEvidenceItem(id),
-  });
-
-  return (
-    <Dialog open onClose={onClose} maxWidth="md" fullWidth>
-      <DialogTitle>
-        {detail.data?.sourceFileName ?? "Loading…"}
-        {detail.data && (
-          <Box component="span" sx={{ ml: 1 }}>
-            <SourceTypeChip sourceType={detail.data.sourceType} />
-          </Box>
-        )}
-      </DialogTitle>
-      <DialogContent dividers>
-        {detail.isPending && <CircularProgress size={24} />}
-        {detail.isError && (
-          <Alert severity="error">Failed to load the evidence item.</Alert>
-        )}
-        {detail.isSuccess && (
-          <Typography
-            component="pre"
-            variant="body2"
-            sx={{ whiteSpace: "pre-wrap", fontFamily: "inherit", m: 0 }}
-          >
-            {detail.data.fullText ?? detail.data.contentPreview}
-          </Typography>
-        )}
-      </DialogContent>
-    </Dialog>
-  );
-}
-
 export function EvidencePage() {
-  const [selectedId, setSelectedId] = useState<string | null>(null);
   const [checked, setChecked] = useState<Set<string>>(new Set());
   const queryClient = useQueryClient();
   const navigate = useNavigate();
@@ -158,7 +113,12 @@ export function EvidencePage() {
                   />
                 </Box>
                 <CardActionArea
-                  onClick={() => setSelectedId(item.id)}
+                  onClick={() =>
+                    navigate({
+                      to: "/evidence/$evidenceId",
+                      params: { evidenceId: item.id },
+                    })
+                  }
                   sx={{ flexGrow: 1 }}
                 >
                   <CardContent>
@@ -186,13 +146,6 @@ export function EvidencePage() {
             </Card>
           ))}
         </Stack>
-      )}
-
-      {selectedId && (
-        <EvidenceDetailDialog
-          id={selectedId}
-          onClose={() => setSelectedId(null)}
-        />
       )}
     </Stack>
   );

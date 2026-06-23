@@ -91,6 +91,23 @@ describe("findings CRUD", () => {
     expect(one.body.id).toBe(created.body.id);
   });
 
+  it("GET /findings?evidenceId returns findings citing that evidence (traceability)", async () => {
+    const { app, evidenceId, observationIds } = await setup();
+    const created = (
+      await request(app).post("/findings").send(draftInput(observationIds))
+    ).body;
+
+    const linked = await request(app).get(`/findings?evidenceId=${evidenceId}`);
+    expect(linked.status).toBe(200);
+    expect(linked.body).toHaveLength(1);
+    expect(linked.body[0].id).toBe(created.id);
+
+    const other = await request(app).get(
+      "/findings?evidenceId=some-other-evidence"
+    );
+    expect(other.body).toHaveLength(0);
+  });
+
   it("POST /findings rejects unknown observation ids with a clear 400", async () => {
     const { app, observationIds } = await setup();
     const res = await request(app)

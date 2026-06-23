@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Link } from "@tanstack/react-router";
 import {
   Alert,
   Box,
@@ -17,6 +18,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import { linkStyle } from "../linkStyle";
 import type {
   Finding,
   FindingStatus,
@@ -206,7 +208,10 @@ export function FindingsPage() {
   const [editing, setEditing] = useState<Finding | null>(null);
   const [deleting, setDeleting] = useState<Finding | null>(null);
 
-  const findings = useQuery({ queryKey: ["findings"], queryFn: fetchFindings });
+  const findings = useQuery({
+    queryKey: ["findings"],
+    queryFn: () => fetchFindings(),
+  });
   const evidence = useQuery({ queryKey: ["evidence"], queryFn: fetchEvidence });
   const observations = useQuery({
     queryKey: ["observations", "__all__"],
@@ -245,7 +250,13 @@ export function FindingsPage() {
                 alignItems="center"
                 justifyContent="space-between"
               >
-                <Typography variant="h6">{finding.title}</Typography>
+                <Link
+                  to="/findings/$findingId"
+                  params={{ findingId: finding.id }}
+                  style={{ ...linkStyle, fontSize: "1.25rem", fontWeight: 500 }}
+                >
+                  {finding.title}
+                </Link>
                 <Stack direction="row" spacing={1} alignItems="center">
                   <SeverityChip severity={finding.severity} />
                   <FindingStatusChip status={finding.status} />

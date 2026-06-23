@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { Link } from "@tanstack/react-router";
 import {
   Alert,
   Box,
@@ -14,6 +15,7 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
+import { linkStyle } from "../linkStyle";
 import { fetchObservations } from "../api/observations";
 import { fetchEvidence } from "../api/evidence";
 import { ObservationTypeChip } from "../components/ObservationTypeChip";
@@ -61,7 +63,8 @@ export function ObservationsPage() {
       )}
       {observations.isSuccess && observations.data.length === 0 && (
         <Alert severity="info">
-          No observations yet. Select evidence and run analysis on the Evidence page.
+          No observations yet. Select evidence and run analysis on the Evidence
+          page.
         </Alert>
       )}
 
@@ -69,7 +72,12 @@ export function ObservationsPage() {
         observations.data.map((obs) => (
           <Card key={obs.id} variant="outlined">
             <CardContent>
-              <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1 }}>
+              <Stack
+                direction="row"
+                spacing={1}
+                alignItems="center"
+                sx={{ mb: 1 }}
+              >
                 <ObservationTypeChip type={obs.observationType} />
                 {obs.relatedFrameworkArea && (
                   <Typography variant="caption" color="text.secondary">
@@ -79,9 +87,18 @@ export function ObservationsPage() {
               </Stack>
               <Typography variant="body1">{obs.text}</Typography>
               <Typography variant="caption" color="text.secondary">
-                Source: {nameFor(obs.evidenceId)}
+                Source:{" "}
+                <Link
+                  to="/evidence/$evidenceId"
+                  params={{ evidenceId: obs.evidenceId }}
+                  style={linkStyle}
+                >
+                  {nameFor(obs.evidenceId)}
+                </Link>
               </Typography>
-              <Box sx={{ mt: 1, display: "flex", alignItems: "center", gap: 1 }}>
+              <Box
+                sx={{ mt: 1, display: "flex", alignItems: "center", gap: 1 }}
+              >
                 <Typography variant="caption" color="text.secondary">
                   Confidence {Math.round(obs.confidence * 100)}%
                 </Typography>

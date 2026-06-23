@@ -7,9 +7,13 @@ import { FindingValidationError } from "../services/findingErrors";
 export function findingsRouter(service: FindingService): Router {
   const router = Router();
 
-  router.get("/findings", async (_req, res, next) => {
+  router.get("/findings", async (req, res, next) => {
     try {
-      res.json(await service.list(DEFAULT_CUSTOMER_ID));
+      const evidenceId =
+        typeof req.query.evidenceId === "string"
+          ? req.query.evidenceId
+          : undefined;
+      res.json(await service.list(DEFAULT_CUSTOMER_ID, evidenceId));
     } catch (err) {
       next(err);
     }
