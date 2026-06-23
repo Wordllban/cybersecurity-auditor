@@ -15,9 +15,19 @@ Domain language lives in [`CONTEXT.md`](CONTEXT.md); every design decision is re
 Prereqs: **Node ≥ 20** (the npm scripts use Node's native `--env-file-if-exists`, so 20.6+;
 developed on Node 24) and **pnpm** (`corepack enable` if you don't have it).
 
+**One command** — bootstrap and run everything:
+
+```bash
+pnpm start            # checks pnpm, creates .env, installs deps, runs server + client
+```
+
+`pnpm start` (`scripts/dev-up.sh`) is idempotent: it only creates `.env` and installs deps
+when missing, so re-runs go straight to launching the **server on :4000** and **client on
+:5173** (Vite prints the URL). Or do it by hand:
+
 ```bash
 pnpm install          # install the workspace
-pnpm dev              # server on :4000, client on :5173 (Vite prints the URL)
+pnpm dev              # server on :4000, client on :5173
 ```
 
 Open the client URL. The database auto-seeds on first boot (7 Hibit markdown files become
