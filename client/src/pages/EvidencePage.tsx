@@ -20,9 +20,16 @@ import type { AnalyzeResponse } from "@hibit/shared";
 import { fetchEvidence, fetchEvidenceItem } from "../api/evidence";
 import { postAnalyze } from "../api/analyze";
 import { ApiError } from "../api/client";
+import { useDraftFindings } from "../draftFindings";
 import { SourceTypeChip } from "../components/SourceTypeChip";
 
-function EvidenceDetailDialog({ id, onClose }: { id: string; onClose: () => void }) {
+function EvidenceDetailDialog({
+  id,
+  onClose,
+}: {
+  id: string;
+  onClose: () => void;
+}) {
   const detail = useQuery({
     queryKey: ["evidence", id],
     queryFn: () => fetchEvidenceItem(id),
@@ -40,7 +47,9 @@ function EvidenceDetailDialog({ id, onClose }: { id: string; onClose: () => void
       </DialogTitle>
       <DialogContent dividers>
         {detail.isPending && <CircularProgress size={24} />}
-        {detail.isError && <Alert severity="error">Failed to load the evidence item.</Alert>}
+        {detail.isError && (
+          <Alert severity="error">Failed to load the evidence item.</Alert>
+        )}
         {detail.isSuccess && (
           <Typography
             component="pre"
@@ -60,6 +69,7 @@ export function EvidencePage() {
   const [checked, setChecked] = useState<Set<string>>(new Set());
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const { addDrafts } = useDraftFindings();
   const evidence = useQuery({ queryKey: ["evidence"], queryFn: fetchEvidence });
 
   const analyze = useMutation({
@@ -67,8 +77,9 @@ export function EvidencePage() {
     onSuccess: (result: AnalyzeResponse) => {
       // Server is the source of truth — refetch observations rather than patch locally.
       queryClient.invalidateQueries({ queryKey: ["observations"] });
-      // Draft findings (result.suggestedFindings) are handled by a later slice.
-      void result;
+      // Draft findings are client-only (ADR-0006): stash them in localStorage-backed
+      // state for review on the Findings page; the server never stores them.
+      addDrafts(result.suggestedFindings);
       navigate({ to: "/observations" });
     },
   });
@@ -81,7 +92,8 @@ export function EvidencePage() {
     });
 
   const analyzeError = analyze.error;
-  const isKeyMissing = analyzeError instanceof ApiError && analyzeError.code === "config";
+  const isKeyMissing =
+    analyzeError instanceof ApiError && analyzeError.code === "config";
 
   return (
     <Stack spacing={3}>
@@ -114,11 +126,13 @@ export function EvidencePage() {
         (isKeyMissing ? (
           <Alert severity="warning">
             <strong>OpenRouter API key not configured.</strong> Set{" "}
-            <code>OPENROUTER_API_KEY</code> in <code>server/.env</code> to run analysis.
+            <code>OPENROUTER_API_KEY</code> in <code>server/.env</code> to run
+            analysis.
           </Alert>
         ) : (
           <Alert severity="error">
-            Analysis failed: {(analyzeError as Error)?.message ?? "unknown error"}
+            Analysis failed:{" "}
+            {(analyzeError as Error)?.message ?? "unknown error"}
           </Alert>
         ))}
 
@@ -138,10 +152,15 @@ export function EvidencePage() {
                   <Checkbox
                     checked={checked.has(item.id)}
                     onChange={() => toggle(item.id)}
-                    inputProps={{ "aria-label": `Select ${item.sourceFileName}` }}
+                    inputProps={{
+                      "aria-label": `Select ${item.sourceFileName}`,
+                    }}
                   />
                 </Box>
-                <CardActionArea onClick={() => setSelectedId(item.id)} sx={{ flexGrow: 1 }}>
+                <CardActionArea
+                  onClick={() => setSelectedId(item.id)}
+                  sx={{ flexGrow: 1 }}
+                >
                   <CardContent>
                     <Stack
                       direction="row"
@@ -154,7 +173,11 @@ export function EvidencePage() {
                       </Typography>
                       <SourceTypeChip sourceType={item.sourceType} />
                     </Stack>
-                    <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      sx={{ mt: 1 }}
+                    >
                       {item.contentPreview}
                     </Typography>
                   </CardContent>
@@ -166,7 +189,10 @@ export function EvidencePage() {
       )}
 
       {selectedId && (
-        <EvidenceDetailDialog id={selectedId} onClose={() => setSelectedId(null)} />
+        <EvidenceDetailDialog
+          id={selectedId}
+          onClose={() => setSelectedId(null)}
+        />
       )}
     </Stack>
   );

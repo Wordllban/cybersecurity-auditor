@@ -28,6 +28,7 @@ import { fetchEvidence } from "../api/evidence";
 import { fetchObservations } from "../api/observations";
 import { SeverityChip } from "../components/SeverityChip";
 import { FindingStatusChip } from "../components/FindingStatusChip";
+import { SuggestedFindings } from "../components/SuggestedFindings";
 
 const SEVERITIES: Severity[] = ["low", "medium", "high"];
 const STATUSES: FindingStatus[] = ["draft", "reviewed", "accepted", "rejected"];
@@ -221,14 +222,16 @@ export function FindingsPage() {
     <Stack spacing={3}>
       <Typography variant="h4">Findings</Typography>
 
+      <SuggestedFindings />
+
       {findings.isPending && <CircularProgress />}
       {findings.isError && (
         <Alert severity="error">Could not load findings.</Alert>
       )}
       {findings.isSuccess && findings.data.length === 0 && (
         <Alert severity="info">
-          No findings yet. Accept a draft finding from the Observations workflow
-          to create one.
+          No saved findings yet. Run analysis on the Evidence page, then accept
+          a suggested finding above to save it here.
         </Alert>
       )}
 
