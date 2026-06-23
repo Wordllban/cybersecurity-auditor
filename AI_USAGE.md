@@ -4,12 +4,12 @@
 
 - **Tool:** Claude Code (Opus), used as the primary build agent end to end.
   - **Where it helped:** Driving a disciplined workflow — a structured grilling/domain-
-    modeling pass that produced `CONTEXT.md` (the domain glossary) and `docs/DECISIONS.md`
-    - ADRs _before_ any code, then one vertical slice per branch/PR (evidence → observations
-      → analyze → findings → persistence → tests → docs). It was strong at boilerplate with
-      sharp edges: the layered `routes → services → repository` wiring, the Zod schemas in
-      `packages/shared`, the `finding_observations` join modeling, and the supertest
-      integration tests.
+    modeling pass that produced the domain glossary (`CONTEXT.md`), `docs/DECISIONS.md`, and
+    ADRs _before_ any code, then one vertical slice per branch/PR (evidence → observations →
+    analyze → findings → persistence → tests → docs). It was strong at boilerplate with sharp
+    edges: the layered `routes → services → repository` wiring, the Zod schemas in
+    `packages/shared`, the `finding_observations` join modeling, and the supertest integration
+    tests.
   - **Where it failed or needed correction:** A handful of real corrections — see below.
 
 - **Tool:** Context7 (live library docs), pulled in on demand.
