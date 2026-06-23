@@ -8,7 +8,11 @@ import { CssBaseline, ThemeProvider, createTheme } from "@mui/material";
 import { router } from "./router";
 import { DRAFT_FINDINGS_KEY } from "./draftFindings";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  // One retry keeps error states snappy for a local-API reviewer tool (the
+  // default of 3 makes failures take seconds to surface).
+  defaultOptions: { queries: { retry: 1 } },
+});
 const theme = createTheme();
 
 const persister = createSyncStoragePersister({
